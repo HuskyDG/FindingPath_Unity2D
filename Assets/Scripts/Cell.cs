@@ -40,6 +40,7 @@ public class Cell : IComparable
     {
         resetStat();
         DestroyObject();
+        parent = null;
     }
 
     // Check nếu đường đi có thể di chuyển

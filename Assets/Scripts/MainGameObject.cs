@@ -23,6 +23,7 @@ public class MainGameObject : MonoBehaviour
     public GameObjectPublicState st;
     public GameObject coin; // object prefab đồng xu
     public GameObject trap;
+    public GameObject test;
 
     // biến lưu trữ các object nút
     public Text status_txt;
@@ -262,11 +263,6 @@ public class MainGameObject : MonoBehaviour
             ResetGRIDStats();
     }
 
-    private double cost(Cell p, Cell q)
-    {
-        return Math.Sqrt(Math.Pow(p.x - q.x, 2) + Math.Pow(p.y - q.y, 2));
-    }
-
     private Cell PickSmallestCell(List<Cell> list)
     {
         if (list.Count == 0) return null;
@@ -274,13 +270,19 @@ public class MainGameObject : MonoBehaviour
         int min_index = 0;
         for (int i = 1; i < list.Count; i++)
         {
-            if (min.CompareTo(list[i]) > 0) {
+            if (min.CompareTo(list[i]) > 0)
+            {
                 min = list[i];
                 min_index = 0;
             }
         }
         list.RemoveAt(min_index);
         return min;
+    }
+
+    private double cost(Cell p, Cell q)
+    {
+        return Math.Sqrt(Math.Pow(p.x - q.x, 2) + Math.Pow(p.y - q.y, 2));
     }
 
     private void solveAstar()
@@ -298,7 +300,6 @@ public class MainGameObject : MonoBehaviour
 
         while (openSet.Count != 0)
         {
-            openSet.Sort();
             // Remove and return the cell with the highest priority from the open set
             Cell current = PickSmallestCell(openSet);
 
@@ -348,7 +349,6 @@ public class MainGameObject : MonoBehaviour
 
         while (openSet.Count != 0)
         {
-            openSet.Sort();
             // Remove and return the cell with the highest priority from the open set
             Cell current = PickSmallestCell(openSet);
 
@@ -384,13 +384,14 @@ public class MainGameObject : MonoBehaviour
 
     private void make_path(int x1, int y1, int x2, int y2)
     {
+        Debug.Log("Make path: " + x1 + ":" + y1 + " --> " + x2 + ":" + y2);
         for (int row = x1; row <= x2; row++)
             for (int col = y1; col <= y2; col++)
             {
-                if (st.GRID[row, col].is_path)
-                    return;
+                Debug.Log("Make path: " + row + ":" + col);
                 st.GRID[row, col].is_path = true;
                 allowPath.Add(st.GRID[row, col]);
+                //Instantiate(test).transform.position = new Vector3(row, col, -3);
             }
     }
 
@@ -412,6 +413,10 @@ public class MainGameObject : MonoBehaviour
     {
         if (state != 0)
             return;
+
+
+        pos_x = (float)transform.position.x;
+        pos_y = (float)transform.position.y;
 
         ResetEverything();
 
@@ -464,8 +469,6 @@ public class MainGameObject : MonoBehaviour
         // Khởi tạo trạng thái
         st = new GameObjectPublicState();
 
-        pos_x = (float)transform.position.x;
-        pos_y = (float)transform.position.y;
         if (!is_valid_pos())
         {
             gameObject.SetActive(false);
@@ -500,7 +503,7 @@ public class MainGameObject : MonoBehaviour
         make_path(1, 9, 11, 9);
         make_path(14, 1, 14, 3);
         make_path(11, 3, 13, 3);
-        make_path(8, 4, 11, 4);
+        make_path(7, 4, 11, 4);
         make_path(11, 5, 11, 8);
         make_path(19, 1, 19, 6);
         make_path(14, 6, 18, 6);
@@ -515,6 +518,7 @@ public class MainGameObject : MonoBehaviour
         make_path(19, 9, 19, 18);
 
         NewGame();
+
     }
 
     // Update is called once per frame
@@ -539,6 +543,7 @@ public class MainGameObject : MonoBehaviour
         // lấy vị trí của Main Object
         pos_x = (float)transform.position.x;
         pos_y = (float)transform.position.y;
+
 
 
         Debug.Log("Hiện tại: " + pos_x + ":" + pos_y);
@@ -587,7 +592,7 @@ public class MainGameObject : MonoBehaviour
 
         // Cập nhật di chuyển
         Vector3 new_position = new Vector3(next_x, next_y, transform.position.z);
-        transform.position = Vector3.MoveTowards(transform.position, new_position, 0.02f);
+        transform.position = Vector3.MoveTowards(transform.position, new_position, 0.06f);
     }
 }
 
