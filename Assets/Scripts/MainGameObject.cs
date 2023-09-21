@@ -24,6 +24,11 @@ public class MainGameObject : MonoBehaviour
     public GameObject coin; // object prefab đồng xu
     public GameObject trap;
     public Text status_txt;
+    public Text bfs_btn_txt;
+    public Text dfs_btn_txt;
+    public Text ifs_btn_txt;
+    public Text greedy_btn_txt;
+    public Text astar_btn_txt;
 
     float pos_x, pos_y; // vị trí vật thể đang đứng
     int orig_x, orig_y;
@@ -112,16 +117,41 @@ public class MainGameObject : MonoBehaviour
 
     void resolve(resolve_method num)
     {
+        string txt = "";
+        System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+        Text btn_txt = null;
         if (num == resolve_method.BFS_RESOLVE)
+        {
+            txt = "Solve BFS";
+            btn_txt = bfs_btn_txt;
             solveBFS();
+        }
         else if (num == resolve_method.DFS_RESOLVE)
+        {
+            txt = "Solve DFS";
+            btn_txt = dfs_btn_txt;
             solveDFS();
+        }
         else if (num == resolve_method.IFS_RESOLVE)
+        {
+            txt = "Solve IFS";
+            btn_txt = ifs_btn_txt;
             solveIFS();
+        }
         else if (num == resolve_method.ASTAR_RESOLVE)
+        {
+            txt = "Solve A*";
+            btn_txt = astar_btn_txt;
             solveAstar();
+        }
         else if (num == resolve_method.GREEDY_RESOLVE)
+        {
+            txt = "Solve Greedy";
+            btn_txt = greedy_btn_txt;
             solveGreedy();
+        }
+        sw.Stop();
+        btn_txt.text = txt + " (" + sw.ElapsedMilliseconds + " ms) ";
 
         Debug.Log("Đã giải xong!");
         // Reset các trạng thái

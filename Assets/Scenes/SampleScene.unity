@@ -16183,6 +16183,11 @@ MonoBehaviour:
   coin: {fileID: 1957888617}
   trap: {fileID: 403237288}
   status_txt: {fileID: 727065939}
+  bfs_btn_txt: {fileID: 2024920809}
+  dfs_btn_txt: {fileID: 1176587628}
+  ifs_btn_txt: {fileID: 469330141}
+  greedy_btn_txt: {fileID: 633895211}
+  astar_btn_txt: {fileID: 908428687}
   state: 0
   resolve_mask: 1
 --- !u!95 &2030143010
