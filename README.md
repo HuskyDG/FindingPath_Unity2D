@@ -1,6 +1,7 @@
 # FindingPath Game
 
-![image](https://github.com/HuskyDG/FindingPath_Unity2D/assets/84650617/6ea75d64-0ef2-42e0-9287-6a5d71998d13)
+![image](https://github.com/HuskyDG/FindingPath_Unity2D/assets/84650617/435a9c48-07a9-4790-bf0e-903e07645584)
+
 
 
  
