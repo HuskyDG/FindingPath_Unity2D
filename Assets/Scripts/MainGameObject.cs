@@ -385,6 +385,8 @@ public class MainGameObject : MonoBehaviour
         for (int row = x1; row <= x2; row++)
             for (int col = y1; col <= y2; col++)
             {
+                if (st.GRID[row, col].is_path)
+                    return;
                 st.GRID[row, col].is_path = true;
                 allowPath.Add(st.GRID[row, col]);
             }
