@@ -406,6 +406,9 @@ public class MainGameObject : MonoBehaviour
     // 
     public void NewGame()
     {
+        if (state != 0)
+            return;
+
         ResetEverything();
 
         // Khởi tạo vị trí ngẫu nhiên của 10 đồng xu trên đường đi
