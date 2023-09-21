@@ -26,6 +26,12 @@ public class ButtonBehavior : MonoBehaviour
         ResolveButton(MainGameObject.resolve_method.DFS_RESOLVE);
     }
 
+
+    public void IFSButton()
+    {
+        ResolveButton(MainGameObject.resolve_method.IFS_RESOLVE);
+    }
+
     public void AstarButton()
     {
         ResolveButton(MainGameObject.resolve_method.ASTAR_RESOLVE);

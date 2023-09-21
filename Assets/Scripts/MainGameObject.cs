@@ -37,6 +37,18 @@ public class MainGameObject : MonoBehaviour
 
     // Functions
 
+    // Reset các trạng thái
+    void ResetGRIDStats()
+    {
+        for (int row = 0; row < st.SO_HANG; row++)
+        { // Duyệt qua từng hàng của bảng đồ họa
+            for (int col = 0; col < st.SO_COT; col++)
+            { // Duyệt qua từng cột của bảng đồ họa
+                st.GRID[row, col].resetStat();
+            }
+        }
+    }
+
     // Lấy láng giềng
     public List<Cell> getNeighbors(Cell e)
     { // Khai báo một phương thức getNeighbors để lấy ra các ô vuông láng giềng của một ô vuông cho trước
@@ -80,6 +92,7 @@ public class MainGameObject : MonoBehaviour
     {
         BFS_RESOLVE, // Chiều rộng
         DFS_RESOLVE, // Chiều sâu
+        IFS_RESOLVE, // Sâu dần
         GREEDY_RESOLVE, //ham ăn
         ASTAR_RESOLVE // A*
     };
@@ -92,6 +105,8 @@ public class MainGameObject : MonoBehaviour
             solveBFS();
         else if (num == resolve_method.DFS_RESOLVE)
             solveDFS();
+        else if (num == resolve_method.IFS_RESOLVE)
+            solveIFS();
         else if (num == resolve_method.ASTAR_RESOLVE)
             solveAstar();
         else if (num == resolve_method.GREEDY_RESOLVE)
@@ -99,13 +114,7 @@ public class MainGameObject : MonoBehaviour
 
         Debug.Log("Đã giải xong!");
         // Reset các trạng thái
-        for (int row = 0; row < st.SO_HANG; row++)
-        { // Duyệt qua từng hàng của bảng đồ họa
-            for (int col = 0; col < st.SO_COT; col++)
-            { // Duyệt qua từng cột của bảng đồ họa
-                st.GRID[row, col].resetStat();
-            }
-        }
+        ResetGRIDStats();
     }
 
     private void solveBFS()
@@ -164,6 +173,50 @@ public class MainGameObject : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool solveDLS(int limit)
+    {
+        Stack<Cell> stack = new Stack<Cell>();
+        stack.Push(st.startCell);
+        st.startCell.visited = true;
+        st.startCell.level = 0;
+
+        while (stack.Count != 0)
+        { // Lặp cho đến khi ngăn xếp rỗng
+            Cell current = stack.Pop(); // Lấy ra và xóa phần tử đầu tiên của ngăn xếp và gán cho biến current
+            Debug.Log("Queue: " + current.x + ":" + current.y);
+
+            if (current == st.goalCell)
+            { // Nếu ô vuông hiện tại là st.goalCell
+                constructPath(current); // Gọi phương thức constructPath với tham số là ô vuông hiện tại để xây dựng đường đi từ st.startCell đến st.goalCell
+                return true; // Thoát khỏi vòng lặp
+            }
+
+            if (current.level >= limit)
+            {
+                return false;
+            }
+
+            foreach (Cell neighbor in getNeighbors(current))
+            { // Duyệt qua từng ô vuông láng giềng của ô vuông hiện tại bằng cách gọi phương thức getNeighbors với tham số là ô vuông hiện tại
+                if (!neighbor.visited && neighbor.CanBeMovedOn())
+                { // Nếu ô vuông láng giềng chưa được duyệt và không phải là chướng ngại vật
+                    stack.Push(neighbor); // Đẩy ô vuông láng giềng vào ngăn xếp
+                    neighbor.visited = true; // Đặt giá trị true cho biến visited của ô vuông láng giềng, tức là đã được duyệt
+                    neighbor.parent = current; // Đặt giá trị của biến parent của ô vuông láng giềng là ô vuông hiện tại, tức là lưu lại quan hệ cha con trong quá trình duyệt DFS
+                    neighbor.level = current.level + 1;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void solveIFS()
+    {
+        // sâu dần
+        for (int limit = 0; limit < st.SO_HANG * st.SO_COT && !solveDLS(limit); limit++)
+            ResetGRIDStats();
     }
 
     private double cost(Cell p, Cell q)

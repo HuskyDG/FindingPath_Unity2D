@@ -13,6 +13,8 @@ public class Cell : IComparable
     public int game_object_type = 0;
     // Dùng cho thuật toán Astar
     public double g = -1, h = -1, f = -1;
+    // Dùng cho thuật toán sâu dần
+    public int level = -1;
 
     // Lưu object
     public GameObject game_object = null;
@@ -31,6 +33,7 @@ public class Cell : IComparable
     {
         visited = false;
         g = -1; h = -1; f = -1;
+        level = -1;
     }
 
     // Check nếu đường đi có thể di chuyển
