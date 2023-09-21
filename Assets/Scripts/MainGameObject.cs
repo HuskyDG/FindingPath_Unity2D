@@ -22,6 +22,7 @@ public class MainGameObject : MonoBehaviour
 {
     public GameObjectPublicState st;
     public GameObject coin; // object prefab đồng xu
+    public GameObject trap;
     public Text status_txt;
 
     float pos_x, pos_y; // vị trí vật thể đang đứng
@@ -361,15 +362,31 @@ public class MainGameObject : MonoBehaviour
         for (int i = 0; i < 30; i++)
         {
             int rand_index = UnityEngine.Random.Range(0, allowPath.Count - 1);
-            if (allowPath[rand_index].is_coin)
+            if (allowPath[rand_index].game_object_type != 0)
                 continue;
             { // Khởi tạo tiền và rải vào bản đồ
-                allowPath[rand_index].is_coin = true;
-                GameObject _coin = Instantiate(coin); // Clone object coin
-                allowPath[rand_index].game_object = _coin;
-                _coin.SetActive(true);
-                _coin.transform.position = new Vector3(allowPath[rand_index].x, allowPath[rand_index].y, -3); // Di chuyển vào đúng ô
-                _coin.name = "Coin " + allowPath[rand_index].x + ":" + allowPath[rand_index].y; // Đặt tên
+                allowPath[rand_index].game_object_type = 1;
+                GameObject obj = Instantiate(coin); // Clone object coin
+                allowPath[rand_index].game_object = obj;
+                obj.SetActive(true);
+                obj.transform.position = new Vector3(allowPath[rand_index].x, allowPath[rand_index].y, -3); // Di chuyển vào đúng ô
+                obj.name = "Coin " + allowPath[rand_index].x + ":" + allowPath[rand_index].y; // Đặt tên
+            }
+        }
+
+        // Rải vài bẫy
+        for (int i = 0; i < 10; i++)
+        {
+            int rand_index = UnityEngine.Random.Range(0, allowPath.Count - 1);
+            if (allowPath[rand_index].game_object_type != 0)
+                continue;
+            { // Khởi tạo tiền và rải vào bản đồ
+                allowPath[rand_index].game_object_type = 2;
+                GameObject obj = Instantiate(trap); // Clone object coin
+                allowPath[rand_index].game_object = obj;
+                obj.SetActive(true);
+                obj.transform.position = new Vector3(allowPath[rand_index].x, allowPath[rand_index].y, -3); // Di chuyển vào đúng ô
+                obj.name = "Trap " + allowPath[rand_index].x + ":" + allowPath[rand_index].y; // Đặt tên
             }
         }
 
@@ -430,10 +447,17 @@ public class MainGameObject : MonoBehaviour
         y = wpath[path_index].y;
 
         // Nếu đi vào ô tiền, cập nhật điểm +1
-        if (st.GRID[x, y].is_coin)
+        if (st.GRID[x, y].game_object_type == 1)
         {
             st.GRID[x, y].DestroyObject(); // Phá hủy Object
             st.point++;
+        }
+
+        if ((Math.Round(pos_x * 1000f) == Math.Round(x * 1000f)) &&
+            (Math.Round(pos_y * 1000f) == Math.Round(y * 1000f))
+            && st.GRID[x, y].game_object_type == 2)
+        {
+            st.point--;
         }
 
         int next_x = wpath[path_index + 1].x;

@@ -318,7 +318,7 @@ GameObject:
   - component: {fileID: 403237290}
   - component: {fileID: 403237289}
   m_Layer: 0
-  m_Name: Spike Trap_0
+  m_Name: SpikePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -406,7 +406,7 @@ Transform:
   m_GameObject: {fileID: 403237288}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6, y: 4, z: 0}
+  m_LocalPosition: {x: -19.4, y: 25.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15755,6 +15755,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coin: {fileID: 1957888617}
+  trap: {fileID: 403237288}
   status_txt: {fileID: 727065939}
   state: 0
   resolve_mask: 1
@@ -15839,6 +15840,6 @@ SceneRoots:
   - {fileID: 314043692}
   - {fileID: 1957888618}
   - {fileID: 1133167941}
-  - {fileID: 403237291}
   - {fileID: 1712686832}
   - {fileID: 772579522}
+  - {fileID: 403237291}

@@ -10,7 +10,7 @@ public class Cell : IComparable
     // Cho thuật toán mù
     public bool visited = false;
     public bool is_path = false; // đường đi
-    public bool is_coin = false;
+    public int game_object_type = 0;
     // Dùng cho thuật toán Astar
     public double g = -1, h = -1, f = -1;
 
@@ -54,7 +54,7 @@ public class Cell : IComparable
     {
         if (this.game_object == null)
             return;
-        this.is_coin = false;
+        this.game_object_type = 0;
         GameObject.Destroy(this.game_object);
         this.game_object = null;
     }
