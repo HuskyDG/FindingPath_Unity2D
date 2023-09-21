@@ -1,0 +1,24 @@
+Instructions
+========================
+
+There are two items here, the stall and the building.
+
+
+Stall (both versions)
+-------------
+This is a one piece item 128x128 pixels size. 
+This item has two states:
+1. Opened Shop
+2. Closed Shop
+
+You can put NPCs always behind the stall if you want, since the stall has transparency it will appear properly.
+
+In the first state the background of the window was separated from the shop so you can add any 
+NPC in the background. 
+The middle item of the PNG is the background for the window shop.
+
+If you are using layers in you game:
+
+1. Add the background layer
+2. Add the NPC
+3. Add the shop
