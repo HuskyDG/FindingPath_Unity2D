@@ -42,4 +42,9 @@ public class ButtonBehavior : MonoBehaviour
         ResolveButton(MainGameObject.resolve_method.GREEDY_RESOLVE);
     }
 
+    public void NewGameButton()
+    {
+        game_player.NewGame();
+    }
+
 }

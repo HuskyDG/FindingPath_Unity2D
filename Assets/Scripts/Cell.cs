@@ -36,6 +36,12 @@ public class Cell : IComparable
         level = -1;
     }
 
+    public void resetEverything()
+    {
+        resetStat();
+        DestroyObject();
+    }
+
     // Check nếu đường đi có thể di chuyển
     public bool CanBeMovedOn()
     {

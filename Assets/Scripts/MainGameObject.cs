@@ -49,6 +49,17 @@ public class MainGameObject : MonoBehaviour
         }
     }
 
+    void ResetEverything()
+    {
+        for (int row = 0; row < st.SO_HANG; row++)
+        { // Duyệt qua từng hàng của bảng đồ họa
+            for (int col = 0; col < st.SO_COT; col++)
+            { // Duyệt qua từng cột của bảng đồ họa
+                st.GRID[row, col].resetEverything();
+            }
+        }
+    }
+
     // Lấy láng giềng
     public List<Cell> getNeighbors(Cell e)
     { // Khai báo một phương thức getNeighbors để lấy ra các ô vuông láng giềng của một ô vuông cho trước
@@ -355,6 +366,61 @@ public class MainGameObject : MonoBehaviour
                 (pos_y >= 0 && pos_y <= st.SO_COT - 1);
     }
 
+    // Hàm lấy vị trí ngẫu nhiên trên đường có thể đi
+    Cell getRandomCellOnPath()
+    {
+        int rand = UnityEngine.Random.Range(0, allowPath.Count - 1);
+        return allowPath[rand];
+    }
+
+    // 
+    public void NewGame()
+    {
+        ResetEverything();
+
+        // Khởi tạo vị trí ngẫu nhiên của 10 đồng xu trên đường đi
+        for (int i = 0; i < 30; i++)
+        {
+            Cell rand_cell = getRandomCellOnPath();
+            if (rand_cell.game_object_type == 0)
+            { // Khởi tạo bẫy và rải vào bản đồ
+                rand_cell.game_object_type = 1;
+                rand_cell.game_object = Instantiate(coin); // clone object
+                rand_cell.game_object.SetActive(true);
+                rand_cell.game_object.transform.position = new Vector3(rand_cell.x, rand_cell.y, -3); // Di chuyển vào đúng ô
+                rand_cell.game_object.name = "Money " + rand_cell.x + ":" + rand_cell.y; // Đặt tên
+            }
+        }
+
+        // Rải vài bẫy
+        for (int i = 0; i < 10; i++)
+        {
+            Cell rand_cell = getRandomCellOnPath();
+            if (rand_cell.game_object_type == 0)
+            { // Khởi tạo bẫy và rải vào bản đồ
+                rand_cell.game_object_type = 2;
+                rand_cell.game_object = Instantiate(trap); // clone object
+                rand_cell.game_object.SetActive(true);
+                rand_cell.game_object.transform.position = new Vector3(rand_cell.x, rand_cell.y, -3); // Di chuyển vào đúng ô
+                rand_cell.game_object.name = "Trap " + rand_cell.x + ":" + rand_cell.y; // Đặt tên
+            }
+        }
+
+
+        Cell random_start = getRandomCellOnPath();
+        orig_x = random_start.x;
+        orig_y = random_start.y;
+        x = orig_x;
+        y = orig_y;
+
+        //khởi tạo mặc định
+        st.startCell = st.GRID[x, y];
+        st.goalCell = st.GRID[19, 19];
+
+        // Di chuyển object về ô bắt đầu
+        transform.position = new Vector3(orig_x, orig_y, -3);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -411,51 +477,7 @@ public class MainGameObject : MonoBehaviour
         make_path(12, 15, 12, 18);
         make_path(19, 9, 19, 18);
 
-        // Khởi tạo vị trí ngẫu nhiên của 10 đồng xu trên đường đi
-        for (int i = 0; i < 30; i++)
-        {
-            int rand_index = UnityEngine.Random.Range(0, allowPath.Count - 1);
-            if (allowPath[rand_index].game_object_type != 0)
-                continue;
-            { // Khởi tạo tiền và rải vào bản đồ
-                allowPath[rand_index].game_object_type = 1;
-                GameObject obj = Instantiate(coin); // Clone object coin
-                allowPath[rand_index].game_object = obj;
-                obj.SetActive(true);
-                obj.transform.position = new Vector3(allowPath[rand_index].x, allowPath[rand_index].y, -3); // Di chuyển vào đúng ô
-                obj.name = "Coin " + allowPath[rand_index].x + ":" + allowPath[rand_index].y; // Đặt tên
-            }
-        }
-
-        // Rải vài bẫy
-        for (int i = 0; i < 10; i++)
-        {
-            int rand_index = UnityEngine.Random.Range(0, allowPath.Count - 1);
-            if (allowPath[rand_index].game_object_type != 0)
-                continue;
-            { // Khởi tạo tiền và rải vào bản đồ
-                allowPath[rand_index].game_object_type = 2;
-                GameObject obj = Instantiate(trap); // Clone object coin
-                allowPath[rand_index].game_object = obj;
-                obj.SetActive(true);
-                obj.transform.position = new Vector3(allowPath[rand_index].x, allowPath[rand_index].y, -3); // Di chuyển vào đúng ô
-                obj.name = "Trap " + allowPath[rand_index].x + ":" + allowPath[rand_index].y; // Đặt tên
-            }
-        }
-
-
-        x = (int)pos_x;
-        y = (int)pos_y;
-
-        orig_x = x;
-        orig_y = y;
-
-        //khởi tạo mặc định
-        st.startCell = st.GRID[x, y];
-        st.goalCell = st.GRID[19, 19];
-
-        // Di chuyển object về ô bắt đầu
-        transform.position = new Vector3(orig_x, orig_y, transform.position.z);
+        NewGame();
     }
 
     // Update is called once per frame
