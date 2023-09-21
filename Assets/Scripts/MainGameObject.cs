@@ -23,6 +23,8 @@ public class MainGameObject : MonoBehaviour
     public GameObjectPublicState st;
     public GameObject coin; // object prefab đồng xu
     public GameObject trap;
+
+    // biến lưu trữ các object nút
     public Text status_txt;
     public Text bfs_btn_txt;
     public Text dfs_btn_txt;
