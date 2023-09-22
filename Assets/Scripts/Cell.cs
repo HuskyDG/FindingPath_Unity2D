@@ -46,6 +46,7 @@ public class Cell : IComparable
     // Check nếu đường đi có thể di chuyển
     public bool CanBeMovedOn()
     {
+        Debug.Log(x + ":" + y + " is_path:" + is_path);
         return is_path;
     }
 

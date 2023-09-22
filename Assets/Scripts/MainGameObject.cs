@@ -8,8 +8,8 @@ public class GameObjectPublicState
 {
 
     public int
-    SO_HANG = 20, // Khai báo một hằng số SO_HANG để lưu số hàng của bảng đồ họa 
-    SO_COT = 20 // Khai báo một hằng số SO_COT để lưu số cột của bảng đồ họa 
+    SO_HANG = 31, // Khai báo một hằng số SO_HANG để lưu số hàng của bảng đồ họa 
+    SO_COT = 31 // Khai báo một hằng số SO_COT để lưu số cột của bảng đồ họa 
     ; // end define
 
     // giá trị có thể thay đổi bởi object khác
@@ -20,10 +20,14 @@ public class GameObjectPublicState
 
 public class MainGameObject : MonoBehaviour
 {
-    public GameObjectPublicState st;
+    public GameObjectPublicState st; // trạng thái map
     public GameObject coin; // object prefab đồng xu
-    public GameObject trap;
-    public GameObject test;
+    public GameObject chest; // lấy object rương
+    public GameObject trap; // lấy object bẫy
+    public Tilemap_Test _tilemap; // lấy object map
+
+
+    public GameObject test; // for test
 
     // biến lưu trữ các object nút
     public Text status_txt;
@@ -95,13 +99,17 @@ public class MainGameObject : MonoBehaviour
     }
 
     void constructPath(Cell current)
-    { // Khai báo một phương thức constructPath để xây dựng đường đi từ st.startCell đến st.goalCell 
+    {
+        Debug.Log("Xây dựng đường đi");
+        // Khai báo một phương thức constructPath để xây dựng đường đi từ st.startCell đến st.goalCell 
         st.point = 0;
         while (current != null)
         { // Lặp cho đến khi ô vuông hiện tại là null, tức là đã quay về st.startCell 
             wpath.Add(current); // Thêm ô vuông hiện tại vào danh sách path 
-            //if (current.isFood == true) st.point++;
-            current = current.parent; // Gán giá trị của biến parent của ô vuông hiện tại cho biến current, tức là di chuyển ngược lại quan hệ cha con trong quá trình duyệt BFS 
+
+            Debug.Log("Đường đi đang xây dựng: " + current.x + ":" + current.y);
+            current = current.parent; // Gán giá trị của biến parent của ô vuông hiện tại cho biến current, tức là di chuyển ngược lại quan hệ cha con trong quá trình duyệt
+
         }
         wpath.Reverse(); // Đảo ngược danh sách path để có thứ tự từ st.startCell đến st.goalCell
     }
@@ -303,8 +311,6 @@ public class MainGameObject : MonoBehaviour
             // Remove and return the cell with the highest priority from the open set
             Cell current = PickSmallestCell(openSet);
 
-            Debug.Log("Queue: " + current.x + ":" + current.y);
-
             if (current == st.goalCell)
             {
                 constructPath(current);
@@ -421,7 +427,7 @@ public class MainGameObject : MonoBehaviour
         ResetEverything();
 
         // Khởi tạo vị trí ngẫu nhiên của 10 đồng xu trên đường đi
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 60; i++)
         {
             Cell rand_cell = getRandomCellOnPath();
             if (rand_cell.game_object_type == 0)
@@ -435,7 +441,7 @@ public class MainGameObject : MonoBehaviour
         }
 
         // Rải vài bẫy
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 30; i++)
         {
             Cell rand_cell = getRandomCellOnPath();
             if (rand_cell.game_object_type == 0)
@@ -457,10 +463,12 @@ public class MainGameObject : MonoBehaviour
 
         //khởi tạo mặc định
         st.startCell = st.GRID[x, y];
-        st.goalCell = st.GRID[19, 19];
+        st.goalCell = getRandomCellOnPath();
 
-        // Di chuyển object về ô bắt đầu
-        transform.position = new Vector3(orig_x, orig_y, -3);
+        // Di chuyển object người chơi về ô bắt đầu
+        transform.position = new Vector3(st.startCell.x, st.startCell.y, transform.position.z);
+        // Di chuyển object rương về ô kết thúc
+        chest.transform.position = new Vector3(st.goalCell.x, st.goalCell.y, chest.transform.position.z);
     }
 
     // Start is called before the first frame update
@@ -491,31 +499,13 @@ public class MainGameObject : MonoBehaviour
         allowPath = new List<Cell>(); // để ghi nhớ những đường có thể đi
 
         // Khởi tạo đường đi
-        make_path(0, 0, 19, 0);
-        make_path(0, 1, 0, 13);
-        make_path(1, 13, 9, 13);
-        make_path(1, 5, 6, 5);
-        make_path(6, 1, 6, 4);
-        make_path(0, 19, 19, 19);
-        make_path(0, 16, 0, 18);
-        make_path(1, 16, 5, 16);
-        make_path(5, 14, 5, 15);
-        make_path(1, 9, 11, 9);
-        make_path(14, 1, 14, 3);
-        make_path(11, 3, 13, 3);
-        make_path(7, 4, 11, 4);
-        make_path(11, 5, 11, 8);
-        make_path(19, 1, 19, 6);
-        make_path(14, 6, 18, 6);
-        make_path(14, 7, 14, 11);
-        make_path(9, 13, 9, 18);
-        make_path(7, 10, 7, 13);
-        make_path(15, 11, 16, 11);
-        make_path(17, 9, 17, 11);
-        make_path(17, 9, 19, 9);
-        make_path(12, 14, 19, 14);
-        make_path(12, 15, 12, 18);
-        make_path(19, 9, 19, 18);
+        foreach (Vector3 pos in _tilemap.occupiedCells) // trong mỗi ô đã chiếm của dường đi
+        {
+            Debug.Log("Set GRID[" + (int)pos.x + ":" + (int)pos.y + "] as path!");
+            st.GRID[(int)pos.x, (int)pos.y].is_path = true;
+            allowPath.Add(st.GRID[(int)pos.x, (int)pos.y]);
+            //Instantiate(test).transform.position = new Vector3(pos.x, pos.y, -3);
+        }
 
         NewGame();
 
