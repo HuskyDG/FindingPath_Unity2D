@@ -12,7 +12,7 @@ public class Cell : IComparable
     public bool is_path = false; // đường đi
     public int game_object_type = 0;
     // Dùng cho thuật toán Astar
-    public double g = -1, h = -1, f = -1;
+    public double g = 0, h = 0, f = 0;
     // Dùng cho thuật toán sâu dần
     public int level = -1;
 
@@ -32,7 +32,7 @@ public class Cell : IComparable
     public void resetStat() // reset về trạng thái gốc
     {
         visited = false;
-        g = -1; h = -1; f = -1;
+        g = 0; h = 0; f = 0;
         level = -1;
     }
 
