@@ -388,19 +388,6 @@ public class MainGameObject : MonoBehaviour
 
     }
 
-    private void make_path(int x1, int y1, int x2, int y2)
-    {
-        Debug.Log("Make path: " + x1 + ":" + y1 + " --> " + x2 + ":" + y2);
-        for (int row = x1; row <= x2; row++)
-            for (int col = y1; col <= y2; col++)
-            {
-                Debug.Log("Make path: " + row + ":" + col);
-                st.GRID[row, col].is_path = true;
-                allowPath.Add(st.GRID[row, col]);
-                //Instantiate(test).transform.position = new Vector3(row, col, -3);
-            }
-    }
-
     private bool is_valid_pos()
     {
         return (pos_x >= 0 && pos_x <= st.SO_HANG - 1) &&
