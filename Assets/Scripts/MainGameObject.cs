@@ -16,6 +16,7 @@ public class GameObjectPublicState
     public Cell[,] GRID; // Không gian
     public Cell startCell, goalCell; // điểm đích
     public int point = -1; // Ghi điểm
+    public int trap = -1;
 }
 
 public class MainGameObject : MonoBehaviour
@@ -102,6 +103,7 @@ public class MainGameObject : MonoBehaviour
         Debug.Log("Xây dựng đường đi");
         // Khai báo một phương thức constructPath để xây dựng đường đi từ st.startCell đến st.goalCell 
         st.point = 0;
+        st.trap = 0;
         while (current != null)
         { // Lặp cho đến khi ô vuông hiện tại là null, tức là đã quay về st.startCell 
             wpath.Add(current); // Thêm ô vuông hiện tại vào danh sách path 
@@ -127,37 +129,42 @@ public class MainGameObject : MonoBehaviour
 
     void resolve(resolve_method num)
     {
-        string txt = "";
+        string txt = "Đang giải...";
         System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
         Text btn_txt = null;
         if (num == resolve_method.BFS_RESOLVE)
         {
             txt = "Solve BFS";
             btn_txt = bfs_btn_txt;
+            btn_txt.text = txt;
             solveBFS();
         }
         else if (num == resolve_method.DFS_RESOLVE)
         {
             txt = "Solve DFS";
             btn_txt = dfs_btn_txt;
+            btn_txt.text = txt;
             solveDFS();
         }
         else if (num == resolve_method.IFS_RESOLVE)
         {
             txt = "Solve IFS";
             btn_txt = ifs_btn_txt;
+            btn_txt.text = txt;
             solveIFS();
         }
         else if (num == resolve_method.ASTAR_RESOLVE)
         {
             txt = "Solve A*";
             btn_txt = astar_btn_txt;
+            btn_txt.text = txt;
             solveAstar();
         }
         else if (num == resolve_method.GREEDY_RESOLVE)
         {
             txt = "Solve Greedy";
             btn_txt = greedy_btn_txt;
+            btn_txt.text = txt;
             solveGreedy();
         }
         sw.Stop();
@@ -412,11 +419,21 @@ public class MainGameObject : MonoBehaviour
 
         ResetEverything();
 
+        Cell random_start = getRandomCellOnPath();
+        orig_x = random_start.x;
+        orig_y = random_start.y;
+        x = orig_x;
+        y = orig_y;
+
+        //khởi tạo mặc định
+        st.startCell = st.GRID[x, y];
+        st.goalCell = getRandomCellOnPath();
+
         // Khởi tạo vị trí ngẫu nhiên của 10 đồng xu trên đường đi
         for (int i = 0; i < 60; i++)
         {
             Cell rand_cell = getRandomCellOnPath();
-            if (rand_cell.game_object_type == 0)
+            if (rand_cell.game_object_type == 0 && rand_cell != st.startCell && rand_cell != st.goalCell)
             { // Khởi tạo bẫy và rải vào bản đồ
                 rand_cell.game_object_type = 1;
                 rand_cell.game_object = Instantiate(coin); // clone object
@@ -430,7 +447,7 @@ public class MainGameObject : MonoBehaviour
         for (int i = 0; i < 30; i++)
         {
             Cell rand_cell = getRandomCellOnPath();
-            if (rand_cell.game_object_type == 0)
+            if (rand_cell.game_object_type == 0 && rand_cell != st.startCell && rand_cell != st.goalCell)
             { // Khởi tạo bẫy và rải vào bản đồ
                 rand_cell.game_object_type = 2;
                 rand_cell.game_object = Instantiate(trap); // clone object
@@ -439,17 +456,6 @@ public class MainGameObject : MonoBehaviour
                 rand_cell.game_object.name = "Trap " + rand_cell.x + ":" + rand_cell.y; // Đặt tên
             }
         }
-
-
-        Cell random_start = getRandomCellOnPath();
-        orig_x = random_start.x;
-        orig_y = random_start.y;
-        x = orig_x;
-        y = orig_y;
-
-        //khởi tạo mặc định
-        st.startCell = st.GRID[x, y];
-        st.goalCell = getRandomCellOnPath();
 
         // Di chuyển object người chơi về ô bắt đầu
         transform.position = new Vector3(st.startCell.x, st.startCell.y, transform.position.z);
@@ -521,7 +527,10 @@ public class MainGameObject : MonoBehaviour
 
 
         Debug.Log("Hiện tại: " + pos_x + ":" + pos_y);
-        status_txt.text = "Điểm hiện tại: " + st.point;
+        status_txt.text = "Lấy xu: " + st.point + 
+                          "\nĐạp bẫy: " + st.trap +
+                          "\nSố bước đi: " + wpath.Count +
+                          "\nTổng điểm: " + (st.point - st.trap);
 
         if ((st.goalCell.parent == null) || (Math.Round(pos_x * 1000f) == Math.Round(st.goalCell.x * 1000f) &&
             Math.Round(pos_y * 1000f) == Math.Round(st.goalCell.y * 1000f)))
@@ -548,7 +557,7 @@ public class MainGameObject : MonoBehaviour
             (Math.Round(pos_y * 1000f) == Math.Round(y * 1000f))
             && st.GRID[x, y].game_object_type == 2)
         {
-            st.point--;
+            st.trap++;
         }
 
         int next_x = wpath[path_index + 1].x;
