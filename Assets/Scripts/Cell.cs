@@ -12,7 +12,9 @@ public class Cell : IComparable
     public bool is_path = false; // đường đi
     public int game_object_type = 0;
     // Dùng cho thuật toán Astar
-    public double g = 0, h = 0, f = 0;
+    public double   g = 0, // chi phí từ Node bắt đầu đến Node hiện tại
+                    h = 0, // chi phí ước tính từ Node hiện tại đến Node đích(dựa trên khoảng cách Manhattan)
+                    f = 0; // tổng chi phí của Node(f = g + h)
     // Dùng cho thuật toán sâu dần
     public int level = -1;
 

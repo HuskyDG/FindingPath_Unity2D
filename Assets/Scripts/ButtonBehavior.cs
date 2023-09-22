@@ -37,6 +37,11 @@ public class ButtonBehavior : MonoBehaviour
         ResolveButton(MainGameObject.resolve_method.ASTAR_RESOLVE);
     }
 
+    public void Astar2Button()
+    {
+        ResolveButton(MainGameObject.resolve_method.ASTAR_RESOLVE_2);
+    }
+
     public void GreedyButton()
     {
         ResolveButton(MainGameObject.resolve_method.GREEDY_RESOLVE);

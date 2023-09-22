@@ -37,6 +37,7 @@ public class MainGameObject : MonoBehaviour
     public Text ifs_btn_txt;
     public Text greedy_btn_txt;
     public Text astar_btn_txt;
+    public Text astar_plus_btn_txt;
 
     float pos_x, pos_y; // vị trí vật thể đang đứng
     int orig_x, orig_y;
@@ -122,7 +123,8 @@ public class MainGameObject : MonoBehaviour
         DFS_RESOLVE, // Chiều sâu
         IFS_RESOLVE, // Sâu dần
         GREEDY_RESOLVE, //ham ăn
-        ASTAR_RESOLVE // A*
+        ASTAR_RESOLVE, // A* ngắn nhất
+        ASTAR_RESOLVE_2 // A* nhiều điểm
     };
 
     public resolve_method resolve_mask = resolve_method.ASTAR_RESOLVE;
@@ -159,6 +161,13 @@ public class MainGameObject : MonoBehaviour
             btn_txt = astar_btn_txt;
             btn_txt.text = txt;
             solveAstar();
+        }
+        else if (num == resolve_method.ASTAR_RESOLVE_2)
+        {
+            txt = "Solve A* point";
+            btn_txt = astar_plus_btn_txt;
+            btn_txt.text = txt;
+            solveAstar(true);
         }
         else if (num == resolve_method.GREEDY_RESOLVE)
         {
@@ -277,7 +286,7 @@ public class MainGameObject : MonoBehaviour
             ResetGRIDStats();
     }
 
-    private Cell PickSmallestCell(List<Cell> list)
+    private Cell PickSmallestCell(List<Cell> list) // Hàm này sẽ lấy f có chi phí thấp nhất và loại bỏ nó khỏi list
     {
         if (list.Count == 0) return null;
         Cell min = list[0];
@@ -299,7 +308,7 @@ public class MainGameObject : MonoBehaviour
         return Math.Sqrt(Math.Pow(p.x - q.x, 2) + Math.Pow(p.y - q.y, 2));
     }
 
-    private void solveAstar()
+    private void solveAstar(bool most_money = false)
     {
         // Create a priority queue of cells with integer priorities
         List<Cell> openSet = new List<Cell>();
@@ -330,7 +339,14 @@ public class MainGameObject : MonoBehaviour
                 if (!neighbor.CanBeMovedOn()) // Skip obstacles
                     continue;
                 // If the neighbor cell is not visited and not an obstacle
-                double tenG = current.g + 1;
+                double tenG = current.g + 10;
+                if (most_money)
+                {
+                    if (current.game_object_type == 1) // tiền
+                        tenG -= 1;
+                    else if (current.game_object_type == 2) // bẫy
+                        tenG += 50;
+                }
                 if (closedSet.Contains(neighbor) && tenG >= neighbor.g)
                     continue;
                 if (!openSet.Contains(neighbor) || tenG < neighbor.g)
@@ -338,7 +354,7 @@ public class MainGameObject : MonoBehaviour
                     neighbor.parent = current;
                     neighbor.g = tenG;
                     neighbor.h = cost(neighbor, st.goalCell);
-                    neighbor.f = neighbor.g + neighbor.h;
+                    neighbor.f = neighbor.g + neighbor.h; // tính h
                     // Add the neighbor cell to the open set with its f value as the priority
                     openSet.Add(neighbor);
                 }
@@ -546,18 +562,18 @@ public class MainGameObject : MonoBehaviour
         x = wpath[path_index].x;
         y = wpath[path_index].y;
 
-        // Nếu đi vào ô tiền, cập nhật điểm +1
-        if (st.GRID[x, y].game_object_type == 1)
-        {
-            st.GRID[x, y].DestroyObject(); // Phá hủy Object
-            st.point++;
-        }
-
         if ((Math.Round(pos_x * 1000f) == Math.Round(x * 1000f)) &&
-            (Math.Round(pos_y * 1000f) == Math.Round(y * 1000f))
-            && st.GRID[x, y].game_object_type == 2)
-        {
-            st.trap++;
+            (Math.Round(pos_y * 1000f) == Math.Round(y * 1000f))) {
+            // Nếu đi vào ô tiền, cập nhật điểm +1
+            if (st.GRID[x, y].game_object_type == 1)
+            {
+                st.point++;
+            }
+            // Nếu đi vào ô bẫy
+            if (st.GRID[x, y].game_object_type == 2)
+            {
+                st.trap++;
+            }
         }
 
         int next_x = wpath[path_index + 1].x;
