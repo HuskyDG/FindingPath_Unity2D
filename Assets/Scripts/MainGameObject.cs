@@ -44,7 +44,6 @@ public class MainGameObject : MonoBehaviour
 
 
     public List<Cell> wpath; // đường đi startCell -> goalCell sau khi giải xong
-    public List<Cell> allowPath; // những đường có thể đi
     public int state = 0;
 
     // Functions
@@ -397,8 +396,8 @@ public class MainGameObject : MonoBehaviour
     // Hàm lấy vị trí ngẫu nhiên trên đường có thể đi
     Cell getRandomCellOnPath()
     {
-        int rand = UnityEngine.Random.Range(0, allowPath.Count - 1);
-        return allowPath[rand];
+        int rand = UnityEngine.Random.Range(0, _tilemap.occupiedCells.Count - 1);
+        return st.GRID[(int)_tilemap.occupiedCells[rand].x, (int)_tilemap.occupiedCells[rand].y];
     }
 
     // 
@@ -483,14 +482,12 @@ public class MainGameObject : MonoBehaviour
 
         // Khởi tạo path
         wpath = new List<Cell>();
-        allowPath = new List<Cell>(); // để ghi nhớ những đường có thể đi
 
         // Khởi tạo đường đi
         foreach (Vector3 pos in _tilemap.occupiedCells) // trong mỗi ô đã chiếm của dường đi
         {
             Debug.Log("Set GRID[" + (int)pos.x + ":" + (int)pos.y + "] as path!");
             st.GRID[(int)pos.x, (int)pos.y].is_path = true;
-            allowPath.Add(st.GRID[(int)pos.x, (int)pos.y]);
             //Instantiate(test).transform.position = new Vector3(pos.x, pos.y, -3);
         }
 
